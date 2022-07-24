@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import itertools
 from PIL import Image, ImageFont, ImageDraw
 
 font_path_list = [
@@ -33,10 +34,17 @@ with open('alphabet.txt') as f:
             offset_x = 0
             for char in text:
                 offset = (offset_x, 0)
-                img = Image.new("RGBA", (cell_width, cell_height))
-                draw = ImageDraw.Draw(img)
-                draw.text((0, 0), str(char), font=font, fill=font_color)
-                background.paste(img, offset)
+
+                img_char = Image.new("RGBA", (cell_width, cell_height))
+
+                for i, j in itertools.product((-1, 0, -1), (-1, 0, 1)):
+                    ImageDraw.Draw(img_char).text(
+                        (0 + i, 0 + j), str(char), font=font, fill="gray")
+
+                ImageDraw.Draw(img_char).text(
+                    (0, 0), str(char), font=font, fill=font_color)
+
+                background.paste(img_char, offset)
 
                 #print(char_index, char, offset)
                 offset_x += cell_width
