@@ -1,8 +1,7 @@
+#!/usr/bin/env python3
 
+import math
 from PIL import Image, ImageFont, ImageDraw
-
-# use a truetype font (.ttf)
-# font file from fonts.google.com (https://fonts.google.com/specimen/Courier+Prime?query=courier)
 
 font_path_list = [
     ("/usr/share/fonts/ubuntu/UbuntuMono-R.ttf", "ubuntu-mono"),
@@ -13,20 +12,39 @@ font_path_list = [
 
 font_color = "#000000"  # HEX Black
 
-text = " !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?"
+with open('alphabet.txt') as f:
+    text = f.readline()
 
-for font_path in font_path_list:
-    for font_size in range(14, 50, 2):
-        font = ImageFont.truetype(font_path[0], font_size)
+    for font_path in font_path_list:
+        for font_size in range(14, 50, 2):
+            percent = 0.15
+            real_font_size = math.floor(font_size - (font_size * percent))
+            font = ImageFont.truetype(font_path[0], real_font_size)
 
-        _, __, width, height = font.getbbox(text)
+            cell_width = int((font_size * 6 + 5) / 10)
+            cell_height = font_size
 
-        img = Image.new("RGBA", (width, height))
-        draw = ImageDraw.Draw(img)
+            image_width = cell_width * 96
+            image_height = font_size
 
-        draw.text((-2, 0), str(text), font=font, fill=font_color)
+            background = Image.new('RGBA', (image_width, image_height))
 
-        try:
-            img.save(f"./fonts/{font_path[1]}-{font_size}.png")
-        except:
-            print(f"[-] Couldn't Save:\t{text}")
+            char_index = 1
+            offset_x = 0
+            for char in text:
+                offset = (offset_x, 0)
+                img = Image.new("RGBA", (cell_width, cell_height))
+                draw = ImageDraw.Draw(img)
+                draw.text((0, 0), str(char), font=font, fill=font_color)
+                background.paste(img, offset)
+
+                #print(char_index, char, offset)
+                offset_x += cell_width
+                char_index += 1
+
+                output_file_path = f"./fonts/{font_path[1]}-{font_size}.png"
+            try:
+                background.save(output_file_path)
+                print(f"[+] Saved\t{output_file_path}")
+            except:
+                print(f"[-] Couldn't save:\t{output_file_path}")
