@@ -2,16 +2,18 @@
 
 import math
 import itertools
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 font_path_list = [
     ("/usr/share/fonts/ubuntu/UbuntuMono-R.ttf", "ubuntu-mono"),
     ("/usr/share/fonts/liberation/LiberationMono-Regular.ttf", "liberation-mono-regular"),
-    ("/usr/share/fonts/adobe-source-code-pro/SourceCodePro-ExtraLight.otf", "source-code-pro-extralight"),
+    ("/usr/share/fonts/adobe-source-code-pro/SourceCodePro-ExtraLight.otf",
+     "source-code-pro-extralight"),
     ("/usr/share/fonts/gsfonts/NimbusMonoPS-Regular.otf", "nimbus-mono")
 ]
 
 font_color = "#000000"  # HEX Black
+shadow_color = "#444444"  # HEX Gray
 
 with open('alphabet.txt') as f:
     text = f.readline()
@@ -33,6 +35,7 @@ with open('alphabet.txt') as f:
             image_height = font_size
 
             background = Image.new('RGBA', (image_width, image_height))
+            background_blur = Image.new('RGBA', (image_width, image_height))
 
             char_index = 1
             offset_x = 0
@@ -42,7 +45,12 @@ with open('alphabet.txt') as f:
                 img_char = Image.new("RGBA", (cell_width, cell_height))
 
                 for i, j in itertools.product((-shadow_x, 0, shadow_x), (-shadow_y, 0, shadow_y)):
-                    ImageDraw.Draw(img_char).text((0 + i, 0 + j), str(char), font=font, fill="gray")
+                    ImageDraw.Draw(img_char).text((0 + i, 0 + j), str(char), font=font, fill=shadow_color)
+
+                n = 0
+                while n < 3:
+                    img_char = img_char.filter(ImageFilter.BLUR)
+                    n += 1
 
                 ImageDraw.Draw(img_char).text((0, 0), str(char), font=font, fill=font_color)
 
@@ -52,7 +60,7 @@ with open('alphabet.txt') as f:
                 offset_x += cell_width
                 char_index += 1
 
-                output_file_path = f"./fonts/{font_path[1]}-{font_size}.png"
+            output_file_path = f"./fonts/{font_path[1]}-{font_size}.png"
             try:
                 background.save(output_file_path)
                 print(f"[+] Saved\t{output_file_path}")
