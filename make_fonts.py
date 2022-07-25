@@ -47,10 +47,13 @@ with open('alphabet.txt') as f:
                 for i, j in itertools.product((-shadow_x, 0, shadow_x), (-shadow_y, 0, shadow_y)):
                     ImageDraw.Draw(img_char).text((0 + i, 0 + j), str(char), font=font, fill=shadow_color)
 
+                img_char = img_char.filter(ImageFilter.BLUR)
+                '''
                 n = 0
                 while n < 3:
                     img_char = img_char.filter(ImageFilter.BLUR)
                     n += 1
+                '''
 
                 ImageDraw.Draw(img_char).text((0, 0), str(char), font=font, fill=font_color)
 
