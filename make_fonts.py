@@ -44,9 +44,17 @@ with open('alphabet.txt') as f:
 
                 img_char = Image.new("RGBA", (cell_width, cell_height))
 
-                ImageDraw.Draw(img_char).text((0 + shadow_x, 0 + shadow_y), str(char), font=font, fill=shadow_color)
+                #for i, j in itertools.product((-shadow_x, 0, shadow_x), (-shadow_y, 0, shadow_y)):
+                for i, j in itertools.product((0, shadow_x), (0, shadow_y)):
+                    ImageDraw.Draw(img_char).text((0 + shadow_x, 0 + shadow_y), str(char), font=font, fill=shadow_color)
 
-                img_char = img_char.filter(ImageFilter.BLUR)
+                #img_char = img_char.filter(ImageFilter.BLUR)
+                '''
+                n = 0
+                while n < 3:
+                    img_char = img_char.filter(ImageFilter.BLUR)
+                    n += 1
+                '''
 
                 ImageDraw.Draw(img_char).text((0, 0), str(char), font=font, fill=font_color)
 
