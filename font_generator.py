@@ -14,12 +14,12 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 
 def font_generate(
-    filename='alphabet.txt',
-    font_color: str = "#000000",
-    shadow_color: str = "#444444",
-    use_shadow: bool | int = True,
-    use_blur: bool | int = False,
-    font_path_list: None | list = None) -> None:
+        filename='alphabet.txt',
+        font_color: str = "#000000",
+        shadow_color: str = "#444444",
+        use_shadow: bool | int = True,
+        use_blur: bool | int = False,
+        font_path_list: None | list = None) -> None:
     """
     Функция генерации png-шрифтов.
 
@@ -39,16 +39,16 @@ def font_generate(
     if font_path_list is None:
         font_path_list = [
             ("/usr/share/fonts/ubuntu/UbuntuMono-R.ttf",
-            "ubuntu-mono"),
+             "ubuntu-mono"),
 
             ("/usr/share/fonts/liberation/LiberationMono-Regular.ttf",
-            "liberation-mono-regular"),
+             "liberation-mono-regular"),
 
             ("/usr/share/fonts/adobe-source-code-pro/SourceCodePro-ExtraLight.otf",
-            "source-code-pro-extralight"),
+             "source-code-pro-extralight"),
 
             ("/usr/share/fonts/gsfonts/NimbusMonoPS-Regular.otf",
-            "nimbus-mono")
+             "nimbus-mono")
         ]
 
     with open(filename) as f:
@@ -60,20 +60,23 @@ def font_generate(
                 if not os.path.exists(save_dir):
                     os.mkdir(save_dir)
 
-                save_file = os.path.join(save_dir, f"{font_path[1]}-{font_size}.png")
+                save_file = os.path.join(
+                    save_dir, f"{font_path[1]}-{font_size}.png")
 
                 percent = 0.15
                 real_font_size = math.floor(font_size - (font_size * percent))
 
-                shadow_x = math.ceil(font_size * 0.015625 * (use_shadow if use_shadow else 1))
-                shadow_y = math.ceil(font_size * 0.015625 * (use_shadow if use_shadow else 1))
+                shadow_x = math.ceil(
+                    font_size * 0.015625 * (use_shadow if use_shadow else 1))
+                shadow_y = math.ceil(
+                    font_size * 0.015625 * (use_shadow if use_shadow else 1))
 
                 font = ImageFont.truetype(font_path[0], real_font_size)
 
                 cell_width = int((font_size * 6 + 5) / 10)
                 cell_height = font_size
 
-                image_width = cell_width * 96
+                image_width = cell_width * len(text)
                 image_height = font_size
 
                 background = Image.new('RGBA', (image_width, image_height))
@@ -86,14 +89,16 @@ def font_generate(
 
                     if use_shadow:
                         for i, j in itertools.product((0, shadow_x), (0, shadow_y)):
-                            ImageDraw.Draw(img_char).text((0 + shadow_x, 0 + shadow_y), str(char), font=font, fill=shadow_color)
+                            ImageDraw.Draw(img_char).text(
+                                (0 + shadow_x, 0 + shadow_y), str(char), font=font, fill=shadow_color)
 
                         n = 0
                         while n < use_blur:
                             img_char = img_char.filter(ImageFilter.BLUR)
                             n += 1
 
-                    ImageDraw.Draw(img_char).text((0, 0), str(char), font=font, fill=font_color)
+                    ImageDraw.Draw(img_char).text(
+                        (0, 0), str(char), font=font, fill=font_color)
 
                     background.paste(img_char, offset)
 
@@ -103,11 +108,3 @@ def font_generate(
                     print(f"[+] Saved\t{save_file}")
                 except:
                     print(f"[-] Couldn't save:\t{save_file}")
-
-
-if __name__ == "__main__":
-    font_generate(use_shadow=False)
-    font_generate(use_shadow=1)
-    font_generate(use_shadow=2)
-    font_generate(use_shadow=3)
-    font_generate(use_shadow=4)
