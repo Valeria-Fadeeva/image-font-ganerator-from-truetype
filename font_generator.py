@@ -8,8 +8,10 @@
 """
 
 import os
+import sys
 import math
 import itertools
+from tabnanny import check
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 
@@ -17,9 +19,11 @@ def font_generate(
         filename='alphabet.txt',
         font_color: str = "#000000",
         shadow_color: str = "#444444",
+        bg_color=(255, 255, 255, 0),
         use_shadow: bool | int = True,
         use_blur: bool | int = False,
-        font_path_list: None | list = None) -> None:
+        font_path_list: None | list = None,
+        save_dir: str | None = None) -> None:
     """
     Функция генерации png-шрифтов.
 
@@ -52,14 +56,42 @@ def font_generate(
         ]
 
     with open(filename) as f:
-        text = f.readline()
+        line_max_length = 0
+        lines = 0
+        text = ''
+
+        for line in f:
+            text += line
+
+            line_length = len(line)
+
+            match line[-1]:
+                case '\r\n':
+                    line_length -= 1
+                case '\n':
+                    line_length -= 1
+
+            if line_max_length < line_length:
+                line_max_length = line_length
+
+            if line.strip():
+                lines += 1
+
+        if save_dir is None:
+            save_dir = f"fonts/{int(use_shadow)}"
+
+        if not os.path.exists(save_dir):
+            check_path = os.path.dirname(os.path.abspath(sys.argv[0]))
+            for p in save_dir.split(os.sep):
+                check_path = os.path.join(check_path, p)
+                print(check_path)
+
+                if not os.path.exists(check_path):
+                    os.mkdir(check_path)
+                    print('Created', check_path)
 
         for font_path in font_path_list:
             for font_size in range(14, 50, 2):
-                save_dir = f"./fonts/{int(use_shadow)}"
-                if not os.path.exists(save_dir):
-                    os.mkdir(save_dir)
-
                 save_file = os.path.join(
                     save_dir, f"{font_path[1]}-{font_size}.png")
 
@@ -76,16 +108,29 @@ def font_generate(
                 cell_width = int((font_size * 6 + 5) / 10)
                 cell_height = font_size
 
-                image_width = cell_width * len(text)
-                image_height = font_size
+                image_width = cell_width * line_max_length
+                image_height = font_size * lines
 
                 background = Image.new('RGBA', (image_width, image_height))
 
                 offset_x = 0
-                for char in text:
-                    offset = (offset_x, 0)
+                offset_y = 0
 
-                    img_char = Image.new("RGBA", (cell_width, cell_height))
+                for char in text:
+                    match char:
+                        case '\r\n':
+                            offset_x = 0
+                            offset_y += cell_height
+                            continue
+                        case '\n':
+                            offset_x = 0
+                            offset_y += cell_height
+                            continue
+
+                    offset = (offset_x, offset_y)
+
+                    img_char = Image.new(
+                        "RGBA", (cell_width, cell_height), color=bg_color)
 
                     if use_shadow:
                         for i, j in itertools.product((0, shadow_x), (0, shadow_y)):

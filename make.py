@@ -11,8 +11,8 @@ import font_generator
 
 
 if __name__ == "__main__":
-    font_generator.font_generate(use_shadow=False)
-    font_generator.font_generate(use_shadow=1)
-    font_generator.font_generate(use_shadow=2)
-    font_generator.font_generate(use_shadow=3)
-    font_generator.font_generate(use_shadow=4)
+    font_generator.font_generate(bg_color=(255, 255, 255, 127), use_shadow=False)
+    font_generator.font_generate(bg_color=(255, 255, 255, 127), use_shadow=1)
+    font_generator.font_generate(bg_color=(255, 255, 255, 127), use_shadow=2)
+    font_generator.font_generate(bg_color=(255, 255, 255, 127), use_shadow=3)
+    font_generator.font_generate(bg_color=(255, 255, 255, 127), use_shadow=4)
