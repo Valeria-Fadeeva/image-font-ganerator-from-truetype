@@ -15,6 +15,6 @@ import font_generator
 if __name__ == "__main__":
     font_generator.font_generate(
         filename='test.txt',
-        bg_color=(255, 255, 255, 127),
+        bg_color=(255, 255, 255, 255),
         use_shadow=1, save_dir='example'
         )

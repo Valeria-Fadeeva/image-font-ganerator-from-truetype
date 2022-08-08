@@ -3,7 +3,7 @@ python, pillow, png, ttf, otf
 
 ## Examples:
 
-font_color="#000000", shadow_color="#444444", bg_color=(255, 255, 255, 127)
+font_color="#000000", shadow_color="#444444", bg_color=(255, 255, 255, 255)
 
 ## test
 
